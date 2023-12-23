@@ -1,7 +1,9 @@
+//.........................import cloudinary ....................../
 const cloudinary = require('cloudinary').v2;
 
 require('dotenv').config();
 
+//.........................create cloudinary function.............../
 exports.cloudinaryConnect = () => {
 	try {
 		cloudinary.config({

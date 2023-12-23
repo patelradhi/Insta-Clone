@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema(
 	{
 		userName: {
 			type: String,
-			required: true,
 			unique: true,
 		},
 		firstName: {
@@ -27,6 +26,9 @@ const userSchema = new mongoose.Schema(
 			required: true,
 		},
 		profilePic: {
+			type: String,
+		},
+		publicId: {
 			type: String,
 		},
 		address: {

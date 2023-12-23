@@ -1,6 +1,7 @@
 //........................importing.................../
 
 const bcrypt = require('bcrypt');
+const cloudinary = require('cloudinary').v2;
 
 //.......................function for hashing password................................./
 
@@ -15,8 +16,8 @@ exports.hashPassword = async (password, num) => {
 
 //........................function for check if file type is supported or not..................//
 
-exports.isFileTypeSupported = async (type, supportedTypes) => {
-	return supportedTypes.includes(type);
+exports.isFileTypeSupported = async (fileType, supportedFile) => {
+	return supportedFile.includes(fileType);
 };
 
 //...........................function for file-upload to cloudinary..................//

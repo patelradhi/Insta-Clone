@@ -7,6 +7,8 @@ const connectWithDb = require('./config/dataBase');
 const { cloudinaryConnect } = require('./config/cloudinary');
 const cookieParser = require('cookie-parser');
 const fileupload = require('express-fileupload');
+const userRoutes = require('./routes/userRoute');
+const postRoute = require('./routes/postRoute');
 
 //...........................middelwares to read req.body............................../
 app.use(express.json());
@@ -24,6 +26,9 @@ app.use(
 
 //......................... mounting..................................../
 
+app.use('/api/v1', userRoutes);
+app.use('/api/v1', postRoute);
+
 //.............................port................................../
 const PORT = process.env.PORT;
 
@@ -31,6 +36,7 @@ const PORT = process.env.PORT;
 connectWithDb();
 
 //............................cloudinary call........................./
+cloudinaryConnect();
 
 //...............................server Started.........................../
 

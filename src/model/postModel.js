@@ -9,21 +9,29 @@ const postSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		user: {
+		author: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
 		},
 		mediaLink: {
 			type: String,
 		},
-		like: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Like',
+		public_id: {
+			type: String,
 		},
-		comment: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Comment',
-		},
+		like: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Like',
+			},
+		],
+
+		comment: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Comment',
+			},
+		],
 	},
 	{
 		timestamps: true,
@@ -32,4 +40,4 @@ const postSchema = new mongoose.Schema(
 );
 
 //..................................exporting......................................../
-module.exports = mongoose.model('Post', commentSchema);
+module.exports = mongoose.model('Post', postSchema);
