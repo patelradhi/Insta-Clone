@@ -22,7 +22,7 @@ exports.postCreate = async (req, res) => {
 		//validation
 
 		if (!caption || !postImage) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'No post Image and caption are uploaded',
 			});
@@ -34,7 +34,7 @@ exports.postCreate = async (req, res) => {
 		const fileType = postImage.name.split('.')[1].toLowerCase();
 
 		if (!isFileTypeSupported(fileType, supportedFile)) {
-			return res.json({
+			return res.status(415).json({
 				message: 'File format not supported',
 			});
 		}
@@ -43,7 +43,7 @@ exports.postCreate = async (req, res) => {
 		const response = await fileUploadToCloudinary(postImage, 'insta-clon');
 
 		if (!response) {
-			res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'file not upload to cloudinary',
 			});
@@ -69,7 +69,7 @@ exports.postCreate = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'found some error while creating post',
 		});
@@ -98,7 +98,7 @@ exports.postUpdate = async (req, res) => {
 		//if post not found then return with error message
 
 		if (!postFind) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'This post is not exist',
 			});
@@ -114,13 +114,21 @@ exports.postUpdate = async (req, res) => {
 		const fileType = postImage.name.split('.')[1].toLowerCase();
 
 		if (!isFileTypeSupported(fileType, supportedFile)) {
-			return res.json({
+			return res.status(415).json({
 				message: 'File format not supported',
 			});
 		}
 
 		//file upload to cloudinary
 		const uploaded = await fileUploadToCloudinary(postImage, 'insta-clon');
+
+		//if file not uploaded successfully then return with error
+		if (!uploaded) {
+			return res.status(400).json({
+				success: false,
+				message: 'file not upload to cloudinary',
+			});
+		}
 
 		//find post and update
 
@@ -142,7 +150,7 @@ exports.postUpdate = async (req, res) => {
 		//if user want to update others post then retuen with error message
 
 		if (!response) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'You can not update others post',
 			});
@@ -171,7 +179,7 @@ exports.postUpdate = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'Found some while updating post',
 		});
@@ -195,7 +203,7 @@ exports.postDelete = async (req, res) => {
 		//if post not found then return with error message
 
 		if (!postFind) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'This post is not exist',
 			});
@@ -213,7 +221,7 @@ exports.postDelete = async (req, res) => {
 		//if user want to delete others post then retuen with error message
 
 		if (!response) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'You can not delete others post',
 			});
@@ -229,7 +237,7 @@ exports.postDelete = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'Found some  error while deleting post',
 		});
@@ -251,7 +259,7 @@ exports.viewPost = async (req, res) => {
 
 		//if post not found then return with error message
 		if (!response) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'No any post created by you',
 			});
@@ -266,7 +274,7 @@ exports.viewPost = async (req, res) => {
 			},
 		});
 	} catch (error) {
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'Found some error while fetching post',
 		});
@@ -293,7 +301,7 @@ exports.likePost = async (req, res) => {
 		//if post not found then return with error message
 
 		if (!postFind) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'This post is not exist',
 			});
@@ -306,7 +314,7 @@ exports.likePost = async (req, res) => {
 		//if user allready liked this post then return with message
 
 		if (likedPost) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'You have allready liked this post',
 			});
@@ -346,7 +354,7 @@ exports.likePost = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'Found some error while unlike',
 		});
@@ -373,7 +381,7 @@ exports.unlikePost = async (req, res) => {
 		//if post not found then return with error message
 
 		if (!postFind) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'This post is not exist',
 			});
@@ -386,7 +394,7 @@ exports.unlikePost = async (req, res) => {
 		//if user not liked  this post then user can not unlike this post so  return with error message
 
 		if (!likedPost) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'You can not unlike this post,before like it',
 			});
@@ -395,7 +403,6 @@ exports.unlikePost = async (req, res) => {
 		//unlike like
 
 		const response = await Like.findOneAndDelete({ user: userId, post: _postId });
-		const likeId = response._id;
 
 		//pull like from user like array
 
@@ -412,7 +419,7 @@ exports.unlikePost = async (req, res) => {
 		);
 
 		if (response.deletedCount == 0) {
-			return res.json({
+			res.status(400).json({
 				success: false,
 				message: 'You have not liked this post yet',
 			});
@@ -428,7 +435,7 @@ exports.unlikePost = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'Found some error while unlike',
 		});
@@ -458,7 +465,7 @@ exports.commentPost = async (req, res) => {
 		//if post not found then return with error message
 
 		if (!postFind) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'This post is not exist',
 			});
@@ -498,7 +505,7 @@ exports.commentPost = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'Found some error while  created comment on post',
 		});
@@ -526,7 +533,7 @@ exports.deleteCommentPost = async (req, res) => {
 		//if post not found then return with error message
 
 		if (!postFind) {
-			return res.json({
+			res.status(400).json({
 				success: false,
 				message: 'This post is not exist',
 			});
@@ -537,7 +544,7 @@ exports.deleteCommentPost = async (req, res) => {
 		const response = await Comment.deleteOne({ user: userId, _id: _id });
 
 		if (response.deletedCount == 0) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'You did not comment on this post',
 			});
@@ -562,7 +569,7 @@ exports.deleteCommentPost = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(400).json({
 			success: false,
 			message: 'Found some error while  deleted comment on post',
 		});
@@ -597,7 +604,7 @@ exports.feed = async (req, res) => {
 			},
 		});
 
-		res.json({
+		res.status(200).json({
 			success: true,
 			message: 'Post finded successfully',
 			data: {
@@ -606,7 +613,7 @@ exports.feed = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'Found some error while  find post',
 		});

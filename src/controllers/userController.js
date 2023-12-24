@@ -20,7 +20,7 @@ exports.signUp = async (req, res) => {
 		//validation
 
 		if (!email || !password || !userName) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'All details are required',
 			});
@@ -31,7 +31,7 @@ exports.signUp = async (req, res) => {
 		const userExist = await User.findOne({ email });
 
 		if (userExist) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'User allready exist',
 			});
@@ -53,7 +53,7 @@ exports.signUp = async (req, res) => {
 
 		//response
 
-		res.json({
+		res.status(200).json({
 			success: true,
 			message: 'User created successfully',
 			data: {
@@ -62,7 +62,7 @@ exports.signUp = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'found some error while signup',
 		});
@@ -80,7 +80,7 @@ exports.logIn = async (req, res) => {
 		//validation
 
 		if (!password || (!email && !userName)) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'All details are required',
 			});
@@ -96,7 +96,7 @@ exports.logIn = async (req, res) => {
 		}
 
 		if (!userExist) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'User not exist',
 			});
@@ -132,23 +132,25 @@ exports.logIn = async (req, res) => {
 				httpOnly: true,
 			};
 
-			res.cookie('token', token, Options).json({
-				status: 'success',
-				message: 'User logged in successfully',
-				data: {
-					...ans._doc,
-					token,
-				},
-			});
+			res.status(200)
+				.cookie('token', token, Options)
+				.json({
+					status: 'success',
+					message: 'User logged in successfully',
+					data: {
+						...ans._doc,
+						token,
+					},
+				});
 		} else {
-			return res.json({
+			return res.status(400).json({
 				success: true,
 				message: 'User not login successfully',
 			});
 		}
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'Found some error while login',
 		});
@@ -174,7 +176,7 @@ exports.updateProfile = async (req, res) => {
 		const fileType = file.name.split('.')[1].toLowerCase();
 
 		if (!isFileTypeSupported(fileType, supportedFile)) {
-			return res.json({
+			return res.status(415).json({
 				message: 'File format not supported',
 			});
 		}
@@ -184,6 +186,14 @@ exports.updateProfile = async (req, res) => {
 
 		//file upload to cloudinary
 		const response = await fileUploadToCloudinary(file, 'insta-clon');
+
+		//if find not uploaded successfully then return with error message
+		if (!response) {
+			return res.status(400).json({
+				success: false,
+				message: 'File not upload to cloudinary',
+			});
+		}
 
 		//create entry in db
 
@@ -217,7 +227,7 @@ exports.updateProfile = async (req, res) => {
 		});
 
 		//response
-		res.json({
+		res.status(200).json({
 			success: true,
 			message: 'User updated successfully',
 			data: {
@@ -226,7 +236,7 @@ exports.updateProfile = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'found some error while updated user',
 		});
@@ -244,7 +254,7 @@ exports.follow = async (req, res) => {
 
 		// if user try to follow himself/herself then return with error message
 		if (userId == _id) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'You can not follow your self',
 			});
@@ -255,7 +265,7 @@ exports.follow = async (req, res) => {
 
 		//if you are allready followed then return with error message
 		if (findFollower) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'You are allready followed this user',
 			});
@@ -276,7 +286,7 @@ exports.follow = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'found some error while follow to other users',
 		});
@@ -294,7 +304,7 @@ exports.ufollow = async (req, res) => {
 
 		// if user try to follow himself/herself then return with error message
 		if (userId == _id) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'You can not ufollow your self',
 			});
@@ -305,7 +315,7 @@ exports.ufollow = async (req, res) => {
 
 		//if user are not follow this (users) then return with error message
 		if (!findFollower) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: ' you are not followed this user so you can not unfollow them ',
 			});
@@ -326,7 +336,7 @@ exports.ufollow = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: 'found some error while ufollow other users',
 		});
@@ -355,7 +365,7 @@ exports.viewProfile = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			messahe: 'Found some error while fetched profil',
 		});
@@ -374,7 +384,7 @@ exports.view = async (req, res) => {
 
 		//if user'profile not found then return with error message
 		if (!profile) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'User not exist',
 			});
@@ -390,7 +400,7 @@ exports.view = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		return res.status(500).json({
 			success: false,
 			messahe: 'Found some error while fetched profil',
 		});
@@ -415,7 +425,7 @@ exports.viewFollowers = async (req, res) => {
 
 		//if user not follow anyone then return with error message
 		if (!follower) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'No one following you ,you have not any followers',
 			});
@@ -423,7 +433,7 @@ exports.viewFollowers = async (req, res) => {
 
 		//response
 
-		res.json({
+		res.status(200).json({
 			success: true,
 			message: 'Followers fetched successfully',
 			data: {
@@ -432,7 +442,7 @@ exports.viewFollowers = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			messahe: 'Found some error while fetched followers',
 		});
@@ -457,7 +467,7 @@ exports.viewFollowings = async (req, res) => {
 
 		//if user not follow anyone then return with error message
 		if (!following) {
-			return res.json({
+			return res.status(400).json({
 				success: false,
 				message: 'You are not following  to anyone ',
 			});
@@ -465,7 +475,7 @@ exports.viewFollowings = async (req, res) => {
 
 		//response
 
-		res.json({
+		res.status(200).json({
 			success: true,
 			message: 'Followings fetched successfully',
 			data: {
@@ -474,7 +484,7 @@ exports.viewFollowings = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(500).json({
 			success: false,
 			messahe: 'Found some error while fetched followings',
 		});
