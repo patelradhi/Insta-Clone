@@ -24,8 +24,8 @@ Welcome to Blogging-Site, a dynamic Node.js application designed to provide a se
 -   post-view --> (User can veiw only his/her post)
 -   Post-like
 -   Post-unlike --> (User can unlike post after liked it)
--   post-comment --> ( user can view all posts of the users he/she is following )  
-     (likeinstagram feed)
+-   post-comment --> (User can view all posts of the users he/she is following )  
+     (like instagram feed)
 -   post-deleteComment
 -   Post-feed
 
