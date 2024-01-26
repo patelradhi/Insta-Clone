@@ -1,6 +1,6 @@
 # Project Overview
 
-Welcome to Blogging-Site, a dynamic Node.js application designed to provide a seamless blogging experience for users. Leveraging the power of the MERN stack, this platform ensures a robust schema accommodating user roles. The user-centric features include secure authentication, allowing users to register, login, and customize profiles.
+"Insta-clone" is a social media platform that replicates key features of Instagram. Users can sign up, log in, and manage their profiles by updating and viewing them. The platform supports social interactions such as following and unfollowing other users, viewing followers and followings. Additionally, users can create, update, and delete posts, like and unlike posts, comment on posts, and view a personalized feed based on the users they are following. The project aims to provide a comprehensive Instagram-like experience for users.
 
 # Key Features
 
