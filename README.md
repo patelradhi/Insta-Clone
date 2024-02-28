@@ -25,7 +25,7 @@
 -   Post-like
 -   Post-unlike --> (User can unlike post after liked it)
 -   post-comment --> (User can comment on post)
--   post-deleteComment --> (User can deletecomment on post after comment on it)
+-   post-deleteComment --> (User can delete comment on post after comment on it)
 -   Post-feed -->(User can view all posts of the users he/she is following )  
      (like instagram feed)
 
