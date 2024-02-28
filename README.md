@@ -24,10 +24,10 @@
 -   post-view --> (User can veiw only his/her post)
 -   Post-like
 -   Post-unlike --> (User can unlike post after liked it)
--   post-comment --> (User can view all posts of the users he/she is following )  
+-   post-comment --> (User can comment on post)
+-   post-deleteComment --> (User can deletecomment on post after comment on it)
+-   Post-feed -->(User can view all posts of the users he/she is following )  
      (like instagram feed)
--   post-deleteComment
--   Post-feed
 
 # Schema
 

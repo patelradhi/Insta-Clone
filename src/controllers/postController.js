@@ -350,6 +350,7 @@ exports.likePost = async (req, res) => {
 			message: 'Post liked successfully',
 			like: {
 				response,
+				ans,
 			},
 		});
 	} catch (error) {
@@ -403,6 +404,7 @@ exports.unlikePost = async (req, res) => {
 		//unlike like
 
 		const response = await Like.findOneAndDelete({ user: userId, post: _postId });
+		console.log('response', response);
 
 		//pull like from user like array
 
@@ -417,14 +419,6 @@ exports.unlikePost = async (req, res) => {
 				new: true,
 			}
 		);
-
-		if (response.deletedCount == 0) {
-			res.status(400).json({
-				success: false,
-				message: 'You have not liked this post yet',
-			});
-		}
-		//response
 
 		res.status(200).json({
 			success: true,
@@ -442,7 +436,7 @@ exports.unlikePost = async (req, res) => {
 	}
 };
 
-//...............................................comment on postpost............................................./
+//...............................................comment on post............................................./
 
 exports.commentPost = async (req, res) => {
 	try {
